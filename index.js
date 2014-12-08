@@ -13,6 +13,7 @@ var express = require('express'),
     random = require('o2.random'),
     redis = require('redis'),
     http = require('http'),
+    htmlparser = require("htmlparser2"),
 
     UrlShorter = require('node-url-shorter'),
 
@@ -442,6 +443,57 @@ app.post('/api/words/delete', function(req, res) {
             res.write('ok');
             res.end();
 
+        });
+    });
+});
+
+app.post('/api/listen', function(req, res) {
+    var phrase = utils.stringCleanup( '' + req.body.phrase);
+
+    if (!phrase) {
+        res.write('error');
+        res.end();
+
+        return;
+    }
+
+    db.hget('phrases', phrase, function(err, data) {
+        if (err) {
+            consoel.log(err);
+
+            res.write('error');
+            res.end();
+
+            return;
+        }
+
+        if (!data) {
+            res.write('phrase doesnt exist in db');
+            res.end();
+
+            return;
+        }
+
+        //console.log(data)
+        JSON.parse(data, function(k,v) {
+            if (k == 'pronunciation') {
+                //console.log(v);
+
+                var parser = new htmlparser.Parser({
+                    onopentag: function(name, attribs){
+                        if(name === "a"){
+                            var mp3path = attribs.onclick.split("'")[3];
+                            console.log( mp3path );
+
+                            res.write('http://www.seslisozluk.net/' + mp3path);
+                            res.end();
+                        }
+                    }
+                });
+
+                parser.write(v);
+                parser.end();
+            }
         });
     });
 });

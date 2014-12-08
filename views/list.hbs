@@ -158,6 +158,26 @@
     });
 
     $('.wb_speak').on('click', function() {
-        alert($(this).attr('data-action'));
+        var word = $(this).attr('data-action');
+
+        if (!word) {return;}
+
+        $.post( '/api/listen', {
+            phrase: word
+        }).then(function(data) {
+            if (!data) {return;}
+
+            var vid = document.createElement('video');
+
+            document.body.appendChild(vid);
+
+            vid.src = data;
+
+            vid.style.position = 'absolute';
+            vid.style.left = '-9999px';
+            vid.style.right = '-9999px';
+
+            vid.play();
+        });
     });
 </script>
