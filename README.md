@@ -21,5 +21,5 @@ Yeah we know, the kode is hachy; that’s what hackathons are for!
 * Semantic UI
 * Redis
 * Express.js
-* SesliSozluk API (we cannot thank them more)
+* SesliSozluk API (we cannot thank them enough)
 * Love, Passion, and Persistence
